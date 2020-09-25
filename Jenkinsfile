@@ -1,9 +1,9 @@
 pipeline {
-  agent {
-    kubernetes  {
-          label 'jenkins-slave'
-          defaultContainer 'jnlp'
-    yaml """
+    agent {
+      kubernetes  {
+            label 'jenkins-slave'
+             defaultContainer 'jnlp'
+      yaml """
 apiVersion: v1
 kind: Pod
 spec:
@@ -20,14 +20,19 @@ spec:
     command:
     - cat
     tty: true
+  - name: tools
+    image: argoproj/argo-cd-ci-builder:v1.0.0
+    command:
+    - cat
+    tty: true
 """
-      }
+        }
+    }
+  environment {
+      IMAGE_REPO = "yathihv/rsvpapp"
+      // Instead of nkhare, use your repo name
   }
-environment {
-    IMAGE_REPO = "yathihv/rsvpapp"
-    // Instead of nkhare, use your git username
-}
-stages {
+  stages {
     stage('Build') {
       environment {
         DOCKERHUB_CREDS = credentials('dockerhub')
@@ -44,8 +49,8 @@ stages {
     stage('Deploy to staging') {
       environment {
         GIT_CREDS = credentials('github')
-        GIT_REPO_URL = "github.com/nkhare/rsvpapp-kustomize.git"
-        GIT_REPO_EMAIL = 'neependra@cloudyuga.guru'
+        GIT_REPO_URL = "github.com/yathihv/rsvpapp-kustomize.git"
+        GIT_REPO_EMAIL = 'yathihv@gmail.com'
         GIT_REPO_BRANCH = "master"
        // Update above variables with your user details
       }
